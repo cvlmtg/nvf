@@ -65,7 +65,7 @@ function nvf
         # extracts node versions according to patterns and sorts them
         set -l pattern
 
-        if set -q $argv
+        if test (count $argv) -eq 0
             set pattern '[0-9]+\.[0-9]+\.[0-9]+'
         else
             set pattern $argv[1]
@@ -364,7 +364,7 @@ function nvf
     end
 
     function __nvf_clean --no-scope-shadowing
-        if set -q $argv
+        if test (count $argv) -eq 0
             rm -rf $NVF_SRC/*
         else
             set -l _version (__version $argv[1])
@@ -475,7 +475,7 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
 "
     end
 
-    if set -q $argv
+    if test (count $argv) -eq 0
         __nvf_help
         return
     end
