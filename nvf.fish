@@ -87,9 +87,9 @@ function nvf
         while read -l _version
             if test -d $NVF_ROOT/$_version
                 set padded_version (printf '%s%-10s%s' \
-                    (set_color $fish_color_command) \
+                    (set_color $fish_color_command[1]) \
                     $_version \
-                    (set_color $fish_color_normal))
+                    (set_color $fish_color_normal[1]))
             else
                 set padded_version (printf '%-10s' $_version)
             end
