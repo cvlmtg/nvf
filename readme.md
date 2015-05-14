@@ -25,7 +25,7 @@ Install node with this command:
 
 It will download and install the latest stable version of node. You can of course specify a different version, like:
 
-    nvf install 0.8.2
+    nvf install 0.12.3
 
 or
 
@@ -35,16 +35,27 @@ to get the latest version available. Now you can enable it for the current sessi
 
     nvf local stable
 
-(or `nvf local 0.8.2` or whatever). To automatically enable it when you open a new shell, run:
+(or `nvf local 0.12.3` or whatever). To automatically enable it when you open a new shell, run:
 
     nvf global stable
 
 Running `nvf help` or just `nvf` will give you a brief list of all available commands, including a brief explanation on how to uninstall it.
 
+io.js
+=====
+
+Add the *--io* flag to install / uninstall iojs (plus all the other commands), e.g.
+
+    nvf --io install stable
+
+or
+
+    nvf --io global 2.0.1
+
 Caveats
 =======
 
-It has bugs. It's not fully tested nor documented. Use it at your own risk. However it should work if you don't do anything fancy. If you need to do something fancy, feel free to do whatever you like to the source code.
+It may have bugs. It's not fully tested nor documented. Use it at your own risk. However it should work. If you need to do something fancy, feel free to do whatever you like to the source code.
 
 Credits
 =======
