@@ -44,7 +44,7 @@ Running `nvf help` or just `nvf` will give you a brief list of all available com
 io.js
 =====
 
-Add the *--io* flag to install / uninstall iojs (plus all the other commands), e.g.
+Add the *--io* flag to install / uninstall iojs (applies to all the other commands too), e.g.
 
     nvf --io install stable
 
