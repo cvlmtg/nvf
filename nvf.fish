@@ -153,7 +153,6 @@ function nvf
 
     function __get_binary_version --no-scope-shadowing
         set -l _version $argv[1]
-        set -l archive
         set -l arch
         set -l os
 
@@ -175,46 +174,20 @@ function nvf
         echo $PLATFORM-v$_version-$os-$arch.tar.gz
     end
 
-    function __install_node --no-scope-shadowing
-        set -l destination $argv[2]
+    function __install_binary --no-scope-shadowing
+        set -l destination $argv[3]
+        set -l remote $argv[2]
         set -l _version $argv[1]
 
-        # binaries started with node 0.8.6
-        switch $_version
-            case '0.0.?*' '0.1.?*' '0.2.?*' '0.3.?*' '0.4.?*' '0.5.?*' '0.6.?*' '0.7.?*'
-                return 1
-            case '0.8.0' '0.8.1' '0.8.2' '0.8.3' '0.8.4' '0.8.5'
-                return 1
-        end
-
         set -l archive (__get_binary_version $_version)
-        set -l remote "https://nodejs.org/dist/v$_version/$archive"
         set -l local $NVF_SRC/$archive
 
         # get the file and directly unpack it into ~/.nvf/installed/
-        __get_file $remote
-        and __verify_checksum $remote
+        __get_file $remote/$archive
+        and __verify_checksum $remote/$archive
         and tar xzf $local -C $destination --strip-components=1
         or begin
-            echo node installation failed.
-            rm -f $local
-            return 1
-        end
-    end
-
-    function __install_iojs --no-scope-shadowing
-        set -l destination $argv[2]
-        set -l _version $argv[1]
-
-        set -l archive (__get_binary_version $_version)
-        set -l remote "https://iojs.org/dist/v$_version/$archive"
-        set -l local $NVF_SRC/$archive
-
-        __get_file $remote
-        and __verify_checksum $remote
-        and tar xzf $local -C $destination --strip-components=1
-        or begin
-            echo iojs installation failed.
+            echo $PLATFORM installation failed.
             rm -f $local
             return 1
         end
@@ -337,13 +310,16 @@ function nvf
             echo $PLATFORM $_version already installed
         else
             set -l destination $NVF_ROOT/$PLATFORM-$_version
+            set -l remote
 
             __ensure_dir $destination
             and begin
                 if test $PLATFORM = 'node'
-                    __install_node $_version $destination
+                    set remote https://nodejs.org/dist/v$_version
+                    __install_binary $_version $remote $destination
                 else
-                    __install_iojs $_version $destination
+                    set remote https://iojs.org/dist/v$_version
+                    __install_binary $_version $remote $destination
                 end
                 and echo $PLATFORM $_version succesfully installed
                 or rm -rf $destination
