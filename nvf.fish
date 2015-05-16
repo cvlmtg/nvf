@@ -230,14 +230,6 @@ function nvf
     end
 
     function __nvf_local --no-scope-shadowing
-        set -l quiet 0
-
-        switch $argv[1]
-            case -q --quiet
-                set -e argv[1]
-                set quiet 1
-        end
-
         if test $argv[1] = 'system'
             echo Using system node
             __clear_env
@@ -274,7 +266,7 @@ function nvf
 
         __clear_env
         __setup_env $NVF_ROOT/$PLATFORM-$_version
-        if test $quiet -eq 0
+        if test $quiet -ne 2
             echo Using $PLATFORM version $_version
         end
     end
@@ -451,8 +443,9 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
                 set -l conf (cat $NVF_DIR/default)
                 set -l temp (echo $conf | tr '-' '\n')
                 set PLATFORM $temp[1]
+                set quiet 2
 
-                __nvf_local --quiet $temp[2]
+                __nvf_local $temp[2]
             end
         case ls-all
             __nvf_ls_remote
