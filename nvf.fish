@@ -23,7 +23,6 @@
 # if test -d ~/.nvf; nvf init; end
 
 function nvf
-    set -l PLATFORM node
     set -l NVF_DIR  $HOME/.nvf
     set -l NVF_SRC  $NVF_DIR/sources
     set -l NVF_ROOT $NVF_DIR/installed
@@ -424,15 +423,27 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
     __ensure_dir $NVF_ROOT
     __ensure_dir $NVF_SRC
 
-    set -l command $argv[1]
-    set -e argv[1]
+    set -l PLATFORM node
+    set -l quiet 0
+    set -l args
+    set -l arg
 
-    switch $command
-        case --io --iojs
-            set command $argv[1]
-            set PLATFORM iojs
-            set -e argv[1]
+    while test (count $argv) -ne 0
+        set arg $argv[1]
+
+        switch $arg
+            case --io --iojs
+                set PLATFORM iojs
+            case -q --quiet
+                set quiet 1
+            case '*'
+                set args $args $arg
+        end
+        set -e argv[1]
     end
+
+    set -l command $args[1]
+    set -e args[1]
 
     switch $command
         case init
@@ -455,15 +466,15 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
         case stable
             __nvf_stable
         case local
-            __nvf_local $argv
+            __nvf_local $args
         case global
-            __nvf_global $argv
+            __nvf_global $args
         case uninstall
-            __nvf_uninstall $argv
+            __nvf_uninstall $args
         case install
-            __nvf_install $argv
+            __nvf_install $args
         case clean
-            __nvf_clean $argv
+            __nvf_clean $args
         case '*'
             __nvf_help
     end
