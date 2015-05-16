@@ -427,10 +427,11 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
     set -l command $argv[1]
     set -e argv[1]
 
-    if test $command = '--io'
-        set command $argv[1]
-        set PLATFORM iojs
-        set -e argv[1]
+    switch $command
+        case --io --iojs
+            set command $argv[1]
+            set PLATFORM iojs
+            set -e argv[1]
     end
 
     switch $command
