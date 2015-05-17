@@ -396,22 +396,22 @@ function nvf
             return
         end
 
-        if test -z $__nvf_current_dir
-            set -gx __nvf_current_dir /
+        if test -z $__nvf_cached_pwd
+            set -gx __nvf_cached_pwd /
         end
 
         # check if we are in a subdir of a cached
         # directory where we found our dotfile
         set -l idx 0
 
-        for tmp in $__nvf_dir_cache
+        for tmp in $__nvf_cached_dirs
             set idx (math $idx + 1)
 
             switch $PWD
                 case $tmp/'*'
                     if test ! -f $tmp/.nvf
                         # update the cache!
-                        set -e __nvf_dir_cache[$idx]
+                        set -e __nvf_cached_dirs[$idx]
                     else
                         echo $tmp/.nvf
                         return
@@ -425,17 +425,17 @@ function nvf
         set -l found ''
 
         switch $PWD
-            case $__nvf_current_dir/'*'
-                set found (__nvf_go_up $PWD, $__nvf_current_dir)
-            case $__nvf_current_dir
+            case $__nvf_cached_pwd/'*'
+                set found (__nvf_go_up $PWD, $__nvf_cached_pwd)
+            case $__nvf_cached_pwd
                 # NOOP
             case '*'
                 set found (__nvf_go_up $PWD, /)
-                set __nvf_current_dir $PWD
+                set __nvf_cached_pwd $PWD
         end
 
         if test -n $found
-            set -U __nvf_dir_cache $__nvf_dir_cache (dirname $found)
+            set -U __nvf_cached_dirs $__nvf_cached_dirs (dirname $found)
             echo $found
             return
         end
