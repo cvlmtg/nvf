@@ -12,7 +12,7 @@ Most of the code is basically a port to the fish scripting language of nave, plu
 Installation
 ============
 
-Download and copy nvf.fish to *~/.config/fish/functions/*, then add this line to your *~/.config/fish/config.fish*:
+Download and copy (or link) nvf.fish to *~/.config/fish/functions/*, then add this line to your *~/.config/fish/config.fish*:
 
     if test -d ~/.nvf; nvf init; end
 
@@ -51,6 +51,31 @@ Add the *--io* flag to install / uninstall iojs (applies to all the other comman
 or
 
     nvf --io global 2.0.1
+
+Automatic version change
+========================
+
+nvf can automatically change platform / version automatically if you wish. just copy (or link) the supplied *cd.fish* script into *~/.config/fish/functions/* and it will automatically call nvf everytime you change directory:
+
+    ~ node --version
+    v0.12.3
+    ~ cd dev/es6project/
+    ~/d/es6project echo iojs-2.0.1 > .nvf
+    ~/d/es6project cd .
+    Using iojs version 2.0.1
+    ~/d/es6project node --version
+    v2.0.1
+    ~/d/es6project cd app/
+    ~/d/e/app cd ../..
+    Using node version 0.12.3
+    ~/dev node --version
+    v0.12.3
+    ~/dev rm es6project/.nvf
+    ~/dev cd es6project/
+    ~/d/es6project node --version
+    v0.12.3
+
+nvf tries to be smart as possibile and to avoid as much as possible to read from the disk to find the dotfile in the current dir and all its parent directories. Of course it may not be as smart as it thinks, so use this feaure with caution as its still just a little experiment.
 
 Caveats
 =======
