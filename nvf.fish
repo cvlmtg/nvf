@@ -53,7 +53,7 @@ function nvf
             case '?*.?*'
                 __version_family $_version
             case '*'
-                exit 1
+                return 1
         end
     end
 
