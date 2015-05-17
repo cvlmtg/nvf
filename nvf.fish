@@ -258,9 +258,7 @@ function nvf
         end
 
         if not __is_installed $_version
-            if test $quiet -eq 0
-                echo $PLATFORM version $_version is not installed
-            end
+            echo $PLATFORM version $_version is not installed
             return 1
         end
 
@@ -376,6 +374,84 @@ function nvf
         __get_versions | __sort_versions | __print_versions
     end
 
+    function __nvf_go_up
+        set -l dir $argv[1]
+        set -l top $argv[2]
+
+        while test $dir != $top
+            set dir (dirname $dir)
+
+            if test -f $dir/.nvf
+                echo $dir/.nvf
+                return
+            end
+        end
+
+        echo ''
+    end
+
+    function __nvf_find_dotfile --no-scope-shadowing
+        if test -f $PWD/.nvf
+            echo $PWD/.nvf
+            return
+        end
+
+        if test -z $__nvf_current_dir
+            set -gx __nvf_current_dir /
+        end
+
+        # check if we are in a subdir of a cached
+        # directory where we found our dotfile
+        set -l idx 0
+
+        for tmp in $__nvf_dir_cache
+            set idx (math $idx + 1)
+
+            switch $PWD
+                case $tmp/'*'
+                    if test ! -f $tmp/.nvf
+                        # update the cache!
+                        set -e __nvf_dir_cache[$idx]
+                    else
+                        echo $tmp/.nvf
+                        return
+                    end
+            end
+        end
+
+        # look for our dotfile up to the last 'cd' where we
+        # did not find any. this should avoid us to hit the
+        # disk too many times
+        set -l found ''
+
+        switch $PWD
+            case $__nvf_current_dir/'*'
+                set found (__nvf_go_up $PWD, $__nvf_current_dir)
+            case $__nvf_current_dir
+                # NOOP
+            case '*'
+                set found (__nvf_go_up $PWD, /)
+                set __nvf_current_dir $PWD
+        end
+
+        if test -n $found
+            set -U __nvf_dir_cache $__nvf_dir_cache (dirname $found)
+            echo $found
+            return
+        end
+
+        echo $NVF_DIR/default
+    end
+
+    function __nvf_auto_change --no-scope-shadowing
+        set -l name (__nvf_find_dotfile)
+        set -l conf (cat $name | tr '-' '\n')
+
+        set PLATFORM $conf[1]
+        set quiet 1
+        __nvf_local $conf[2]
+    end
+
     function __nvf_help
         echo "
 Usage: nvf [--io] <command>
@@ -385,6 +461,10 @@ Commands:
 install <version>    Install the version specified (e.g. 0.10.22)
 global <version>     use <version> for the current and future sessions
 local <version>      use <version> for the current session only
+auto                 change platform / version based on the content of
+                     the .nvf file found in the current directory or
+                     in one of the parent directory. in no such file
+                     is found than the default is used
 clean <version>      Delete the source code for <version>
 uninstall <version>  Delete <version>
 ls                   List versions currently installed
@@ -440,12 +520,11 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
     switch $command
         case init
             if test -f $NVF_DIR/default
-                set -l conf (cat $NVF_DIR/default)
-                set -l temp (echo $conf | tr '-' '\n')
-                set PLATFORM $temp[1]
+                set -l conf (cat $NVF_DIR/default | tr '-' '\n')
+                set PLATFORM $conf[1]
                 set quiet 2
 
-                __nvf_local $temp[2]
+                __nvf_local $conf[2]
             end
         case ls-all
             __nvf_ls_remote
@@ -468,6 +547,8 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
             __nvf_install $args
         case clean
             __nvf_clean $args
+        case auto
+            __nvf_auto_change
         case '*'
             __nvf_help
     end
