@@ -75,7 +75,7 @@ nvf can automatically change platform / version automatically if you wish. just 
     ~/d/es6project node --version
     v0.12.3
 
-nvf tries to be smart as possibile and to avoid as much as possible to read from the disk to find the dotfile in the current dir and all its parent directories. Of course it may not be as smart as it thinks, so use this feaure with caution as its still just a little experiment.
+nvf tries to be smart as possibile and to avoid as much as possible to read from the disk to find the dotfile in the current dir and all its parent directories. Of course it may not be as smart as it thinks, so use this feaure with caution as it's still just a little experiment.
 
 Caveats
 =======
