@@ -448,7 +448,7 @@ function nvf
         set -l conf (cat $name | tr '-' '\n')
 
         set PLATFORM $conf[1]
-        set quiet 1
+        set quiet $argv[1]
         __nvf_local $conf[2]
     end
 
@@ -519,13 +519,7 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
 
     switch $command
         case init
-            if test -f $NVF_DIR/default
-                set -l conf (cat $NVF_DIR/default | tr '-' '\n')
-                set PLATFORM $conf[1]
-                set quiet 2
-
-                __nvf_local $conf[2]
-            end
+            __nvf_auto_change 2
         case ls-all
             __nvf_ls_remote
             __nvf_ls
@@ -548,7 +542,7 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
         case clean
             __nvf_clean $args
         case auto
-            __nvf_auto_change
+            __nvf_auto_change 1
         case '*'
             __nvf_help
     end
