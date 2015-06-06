@@ -327,7 +327,7 @@ function nvf
 
         which $PLATFORM > /dev/null
         and begin
-            set -l dir (dirname (which $PLATFORM))
+            set -l dir $NVF_ROOT/$PLATFORM-$_version
 
             # if we are using a "local" version, switch to the "global"
             # version. if we are using a "global" version, switch
@@ -336,10 +336,17 @@ function nvf
             if contains $dir $PATH
                 set -l global (cat $NVF_DIR/default)
 
-                if test $PLATFORM-$_version != $global
-                    __nvf_local $global
-                else
+                if test $PLATFORM-$_version = $global
                     __nvf_global system
+                else
+                    # FIXME this is kinda ugly...
+                    set -l TEMP $PLATFORM
+
+                    set -l conf (echo $global | tr '-' '\n')
+                    set PLATFORM $conf[1]
+                    __nvf_local $conf[2]
+
+                    set PLATFORM $TEMP
                 end
             end
         end
