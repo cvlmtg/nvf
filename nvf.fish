@@ -17,8 +17,8 @@
 # INSTALLATION
 # ============
 #
-# Place this script inside ~/.config/fish/functions and
-# add this line to your ~/.config/fish/config.fish
+# Place this script inside ~/.config/fish/functions, create the
+# directory ~/.nvf and then add this line to ~/.config/fish/config.fish
 #
 # if test -d ~/.nvf; nvf init; end
 

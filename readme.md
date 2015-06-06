@@ -12,7 +12,7 @@ Most of the code is basically a port to the fish scripting language of nave, plu
 Installation
 ============
 
-Download and copy (or link) nvf.fish to *~/.config/fish/functions/*, then add this line to your *~/.config/fish/config.fish*:
+Download and copy (or link) nvf.fish to *~/.config/fish/functions/*, create the directory ~/.nvf and then add this line to your *~/.config/fish/config.fish*:
 
     if test -d ~/.nvf; nvf init; end
 
