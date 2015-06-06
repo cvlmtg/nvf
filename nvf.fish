@@ -258,14 +258,14 @@ function nvf
         end
 
         if not __is_installed $_version
-            echo $PLATFORM version $_version is not installed
+            echo $PLATFORM $_version is not installed
             return 1
         end
 
         __clear_env
         __setup_env $NVF_ROOT/$PLATFORM-$_version
         if test $quiet -ne 2
-            echo Using $PLATFORM version $_version
+            echo Using $PLATFORM $_version
         end
     end
 
@@ -345,7 +345,7 @@ function nvf
         end
 
         rm -rf $NVF_ROOT/$PLATFORM-$_version
-        echo Uninstalled $PLATFORM version $_version
+        echo Uninstalled $PLATFORM $_version
     end
 
     function __nvf_latest --no-scope-shadowing
