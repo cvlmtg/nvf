@@ -219,10 +219,12 @@ function nvf
         set -l man $argv[1]/share/man
         set -l bin $argv[1]/bin
 
-        # $MANPATH is copied from nvm, but it seems
-        # it's ignored on OSX (at least on 10.9)
         if not contains $man $MANPATH
-            set -g MANPATH $man $MANPATH
+            if test -z $MANPATH
+              set -g MANPATH :$man
+            else
+              set -g MANPATH $man $MANPATH
+            end
         end
         if not contains $bin $PATH
             set PATH $bin $PATH
