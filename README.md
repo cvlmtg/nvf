@@ -44,7 +44,7 @@ Running `nvf help` or just `nvf` will give you a brief list of all available com
 Automatic version change
 ========================
 
-nvf can automatically change platform / version automatically if you wish. just copy (or link) the supplied *cd.fish* script into *~/.config/fish/functions/* and it will automatically call nvf everytime you change directory:
+Nvf can automatically change version automatically if you wish. Just copy (or link) the supplied *cd.fish* script into *~/.config/fish/functions/* and it will automatically call nvf everytime you change directory:
 
     ~ node --version
     v0.12.3

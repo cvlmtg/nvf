@@ -452,18 +452,18 @@ Usage: nvf <command>
 Commands:
 
 install <version>    Install the version specified (e.g. 0.10.22)
-global <version>     use <version> for the current and future sessions
-local <version>      use <version> for the current session only
-auto                 change platform / version based on the content of
-                     the .nvf file found in the current directory or
-                     in one of the parent directory. in no such file
-                     is found than the default is used
+global <version>     Use <version> for the current and future sessions
+local <version>      Use <version> for the current session only
+auto                 Change version based on the content of the .nvf
+                     file found in the current directory or in one of
+                     the parent directories. If no such file is found
+                     then the default is used
 clean <version>      Delete the source code for <version>
 uninstall <version>  Delete <version>
 ls                   List versions currently installed
 ls-remote            List remote node versions
 ls-all               List remote and local node versions
-latest               Show the most recent dist version
+latest               Show the most recent version
 stable               Show the most recent stable version
 help                 Output help information
 
