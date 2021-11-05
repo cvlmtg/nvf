@@ -11,9 +11,6 @@
 #
 # All the bugs are my own.
 #
-# This software is released in the public domain, just give credits
-# where credits are due.
-#
 # INSTALLATION
 # ============
 #
