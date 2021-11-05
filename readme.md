@@ -41,17 +41,6 @@ to get the latest version available. Now you can enable it for the current sessi
 
 Running `nvf help` or just `nvf` will give you a brief list of all available commands, including a brief explanation on how to uninstall it.
 
-io.js
-=====
-
-Add the *--io* flag to install / uninstall iojs (applies to all the other commands too), e.g.
-
-    nvf --io install stable
-
-or
-
-    nvf --io global 2.0.1
-
 Automatic version change
 ========================
 
@@ -77,11 +66,6 @@ nvf can automatically change platform / version automatically if you wish. just 
 
 nvf tries to be smart as possibile and to avoid as much as possible to read from the disk to find the dotfile in the current dir and all its parent directories. Of course it may not be as smart as it thinks, so use this feaure with caution as it's still just a little experiment.
 
-Caveats
-=======
-
-It may have bugs. It's not fully tested nor documented. Use it at your own risk. However it should work. If you need to do something fancy, feel free to do whatever you like to the source code.
-
 Credits
 =======
 
@@ -95,12 +79,8 @@ Some ideas might have been taken from rvm, rbenv and others.
 
 All the bugs are my own.
 
-This software is released in the public domain, just give credits
-where credits are due.
-
 ---
 
 [fish]: http://fishshell.com/
 [nvm]: https://github.com/creationix/nvm
 [nave]: https://github.com/isaacs/nave
-
