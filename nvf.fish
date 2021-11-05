@@ -43,6 +43,7 @@ function nvf
         # an actual version (e.g. 'stable' or just '0.10' to select
         # the lastest version in the 0.10.xx releases
         set -l _version (echo $argv[1] | sed 's/^v//')
+
         switch $_version
             case latest
                 __nvf_latest
@@ -58,11 +59,7 @@ function nvf
     end
 
     function __get_versions --no-scope-shadowing
-        if test $PLATFORM = 'node'
-            __get -s https://nodejs.org/dist/
-        else
-            __get -s https://iojs.org/dist/
-        end
+      __get -s https://nodejs.org/dist/
     end
 
     function __sort_versions
@@ -74,11 +71,13 @@ function nvf
         else
             set pattern $argv[1]
         end
+
         egrep -o $pattern | sort -u -k 1,1n -k 2,2n -k 3,3n -t .
     end
 
     function __version_family
         set -l family $argv[1]
+
         __get_versions \
             | __sort_versions $family'\.[0-9]+' \
             | tail -n1
@@ -89,7 +88,7 @@ function nvf
         set -l counter 0
 
         while read -l _version
-            if test -d $NVF_ROOT/$PLATFORM-$_version
+            if test -d $NVF_ROOT/node-$_version
                 set padded_version (printf '%s%-10s%s' \
                     (set_color $fish_color_command[1]) \
                     $_version \
@@ -114,7 +113,7 @@ function nvf
     end
 
     function __is_installed --no-scope-shadowing
-        test -x $NVF_ROOT/$PLATFORM-$argv[1]/bin/$PLATFORM
+        test -x $NVF_ROOT/node-$argv[1]/bin/node
     end
 
     function __verify_checksum --no-scope-shadowing
@@ -136,6 +135,7 @@ function nvf
                 return 1
             end
         end
+
         return 0
     end
 
@@ -144,9 +144,11 @@ function nvf
         set -l archive (basename $remote)
 
         echo Downloading $remote
+
         if test -f $NVF_SRC/$archive
             return 0
         end
+
         __get -L -f --progress-bar $remote -o $NVF_SRC/$archive
     end
 
@@ -163,6 +165,7 @@ function nvf
             case '*'
                 return 1
         end
+
         switch (uname -m)
             case x86_64
                 set arch x64
@@ -170,7 +173,7 @@ function nvf
                 set arch x86
         end
 
-        echo $PLATFORM-v$_version-$os-$arch.tar.gz
+        echo node-v$_version-$os-$arch.tar.gz
     end
 
     function __install_binary --no-scope-shadowing
@@ -186,7 +189,7 @@ function nvf
         and __verify_checksum $remote/$archive
         and tar xzf $local -C $destination --strip-components=1
         or begin
-            echo $PLATFORM installation failed.
+            echo node installation failed.
             rm -f $local
             return 1
         end
@@ -197,11 +200,7 @@ function nvf
         or return
 
         set -l node_version (node --version | sed 's/^v//')
-
-        which iojs > /dev/null
-        and set node_version iojs-$node_version
-        or  set node_version node-$node_version
-
+        set -l node_version node-$node_version
         set -l man $NVF_ROOT/$node_version/share/man
         set -l bin $NVF_ROOT/$node_version/bin
 
@@ -209,6 +208,7 @@ function nvf
             set -l index (contains -i $man $MANPATH)
             set -e MANPATH[$index]
         end
+
         if contains $bin $PATH
             set -l index (contains -i $bin $PATH)
             set -e PATH[$index]
@@ -226,6 +226,7 @@ function nvf
               set -g MANPATH $man $MANPATH
             end
         end
+
         if not contains $bin $PATH
             set PATH $bin $PATH
         end
@@ -239,35 +240,36 @@ function nvf
         end
 
         set -l _version (__version $argv[1])
-        set -l bin $NVF_ROOT/$PLATFORM-$_version/bin
+        set -l bin $NVF_ROOT/node-$_version/bin
 
         if contains $bin $PATH
             if test $quiet -eq 0
-                echo Already using $PLATFORM $_version
+                echo Already using node $_version
             end
             return
         end
 
-        which $PLATFORM > /dev/null
+        which node > /dev/null
         and begin
             set -l node_version (node --version)
             if test v$_version = $node_version
                 if test $quiet -eq 0
-                    echo Already using $PLATFORM $_version
+                    echo Already using node $_version
                 end
                 return
             end
         end
 
         if not __is_installed $_version
-            echo $PLATFORM $_version is not installed
+            echo node $_version is not installed
             return 1
         end
 
         __clear_env
-        __setup_env $NVF_ROOT/$PLATFORM-$_version
+        __setup_env $NVF_ROOT/node-$_version
+
         if test $quiet -ne 2
-            echo Using $PLATFORM $_version
+            echo Using node $_version
         end
     end
 
@@ -282,7 +284,7 @@ function nvf
         __nvf_local $argv
         # save the selected version
         set -l _version (__version $argv[1])
-        and echo $PLATFORM-$_version > $NVF_DIR/default
+        and echo node-$_version > $NVF_DIR/default
     end
 
     function __nvf_clean --no-scope-shadowing
@@ -290,7 +292,7 @@ function nvf
             rm -rf $NVF_SRC/*
         else
             set -l _version (__version $argv[1])
-            rm -rf $NVF_SRC/$PLATFORM-?$_version*
+            rm -rf $NVF_SRC/node-?$_version*
         end
     end
 
@@ -298,21 +300,16 @@ function nvf
         set -l _version (__version $argv[1])
 
         if __is_installed $_version
-            echo $PLATFORM $_version already installed
+            echo node $_version already installed
         else
-            set -l destination $NVF_ROOT/$PLATFORM-$_version
+            set -l destination $NVF_ROOT/node-$_version
             set -l remote
 
             __ensure_dir $destination
             and begin
-                if test $PLATFORM = 'node'
-                    set remote https://nodejs.org/dist/v$_version
-                    __install_binary $_version $remote $destination
-                else
-                    set remote https://iojs.org/dist/v$_version
-                    __install_binary $_version $remote $destination
-                end
-                and echo $PLATFORM $_version succesfully installed
+                set remote https://nodejs.org/dist/v$_version
+                __install_binary $_version $remote $destination
+                and echo node $_version succesfully installed
                 or rm -rf $destination
             end
             or echo Cannot create $destination
@@ -323,38 +320,33 @@ function nvf
         set -l _version (__version $argv[1])
 
         if not __is_installed $_version
-            echo $PLATFORM $_version is not installed
+            echo node $_version is not installed
             return 1
         end
 
-        which $PLATFORM > /dev/null
+        which node > /dev/null
         and begin
-            set -l dir $NVF_ROOT/$PLATFORM-$_version
+            set -l dir $NVF_ROOT/node-$_version
 
             # if we are using a "local" version, switch to the "global"
             # version. if we are using a "global" version, switch
             # to the system version and erase ~/.nvf/default
             # if we are using a system node, do nothing
+
             if contains $dir $PATH
                 set -l global (cat $NVF_DIR/default)
 
-                if test $PLATFORM-$_version = $global
+                if test node-$_version = $global
                     __nvf_global system
                 else
-                    # FIXME this is kinda ugly...
-                    set -l TEMP $PLATFORM
-
                     set -l conf (echo $global | tr '-' '\n')
-                    set PLATFORM $conf[1]
                     __nvf_local $conf[2]
-
-                    set PLATFORM $TEMP
                 end
             end
         end
 
-        rm -rf $NVF_ROOT/$PLATFORM-$_version
-        echo Uninstalled $PLATFORM $_version
+        rm -rf $NVF_ROOT/node-$_version
+        echo Uninstalled node $_version
     end
 
     function __nvf_latest --no-scope-shadowing
@@ -362,11 +354,7 @@ function nvf
     end
 
     function __nvf_stable --no-scope-shadowing
-        if test $PLATFORM = 'node'
-            set -l pattern '[0-9]+\.[0-9]*[02468]\.[0-9]+'
-        else
-            set -l pattern '[0-9]+\.[0-9]+\.[0-9]+'
-        end
+        set -l pattern '[0-9]+\.[0-9]*[02468]\.[0-9]+'
 
         __get_versions | __sort_versions $pattern | tail -n1
     end
@@ -456,14 +444,13 @@ function nvf
         set -l name (__nvf_find_dotfile)
         set -l conf (cat $name | tr '-' '\n')
 
-        set PLATFORM $conf[1]
         set quiet $argv[1]
         __nvf_local $conf[2]
     end
 
     function __nvf_help
         echo "
-Usage: nvf [--io] <command>
+Usage: nvf <command>
 
 Commands:
 
@@ -482,8 +469,6 @@ ls-all               List remote and local node versions
 latest               Show the most recent dist version
 stable               Show the most recent stable version
 help                 Output help information
-
-add the --io flag to download / list iojs versions
 
 <version> can be:
     'stable' to get the latest stable version.
@@ -504,7 +489,6 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
     __ensure_dir $NVF_ROOT
     __ensure_dir $NVF_SRC
 
-    set -l PLATFORM node
     set -l quiet 0
     set -l args
     set -l arg
@@ -513,8 +497,6 @@ to uninstall nvf just delete ~/.nvf and ~/.config/fish/functions/nvf.fish
         set arg $argv[1]
 
         switch $arg
-            case --io --iojs
-                set PLATFORM iojs
             case -q --quiet
                 set quiet 1
             case '*'
