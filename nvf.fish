@@ -354,7 +354,7 @@ function nvf
     end
 
     function __nvf_stable --no-scope-shadowing
-        set -l pattern '[0-9]+\.[0-9]*[02468]\.[0-9]+'
+        set -l pattern '[0-9]*[02468]\.[0-9]+\.[0-9]+'
 
         __get_versions | __sort_versions $pattern | tail -n1
     end
