@@ -230,7 +230,7 @@ function nvf
     end
 
     function __nvf_local --no-scope-shadowing
-        if test $argv[1] = 'system'
+        if test -z "$argv[1]" -o "$argv[1]" = 'system'
             echo Using system node
             __clear_env
             return
@@ -439,7 +439,11 @@ function nvf
 
     function __nvf_auto_change --no-scope-shadowing
         set -l name (__nvf_find_dotfile)
-        set -l conf (cat $name | tr '-' '\n')
+        set -l conf 'system'
+
+        if test -e $name
+          set conf (cat $name | tr '-' '\n')
+        end
 
         set quiet $argv[1]
         __nvf_local $conf[2]
