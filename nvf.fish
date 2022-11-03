@@ -164,6 +164,8 @@ function nvf
         end
 
         switch (uname -m)
+            case arm64
+                set arch arm64
             case x86_64
                 set arch x64
             case '*'
