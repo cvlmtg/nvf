@@ -122,7 +122,7 @@ function nvf
             | grep $archive \
             | awk '{print $1}')
 
-        if test -z $rsum
+        if test -z "$rsum"
             echo Checksum not found for $archive
             return 1
         else
@@ -219,10 +219,10 @@ function nvf
         set -l bin $argv[1]/bin
 
         if not contains $man $MANPATH
-            if test -z $MANPATH
+            if test -z "$MANPATH"
               set -g MANPATH :$man
             else
-              set -g MANPATH $man $MANPATH
+              set -g MANPATH $man "$MANPATH"
             end
         end
 
@@ -392,7 +392,7 @@ function nvf
             return
         end
 
-        if test -z $__nvf_cached_pwd
+        if test -z "$__nvf_cached_pwd"
             set -gx __nvf_cached_pwd /
         end
 
